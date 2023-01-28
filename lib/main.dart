@@ -62,11 +62,29 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  moveItemPosition(int oldIndex, int newIndex) {
+    setState(() {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final item = _itemList.removeAt(oldIndex);
+      _itemList.insert(newIndex, item);
+    });
+    updateItemsPosition();
+  }
+
+  updateItemsPosition() async {
+    for (int index = 0; index < _itemList.length; index += 1) {
+      _itemList[index].position = index;
+      await _restService.updateItem(_itemList[index]);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color oddItemColor = colorScheme.primary.withOpacity(0.2);
-    final Color evenItemColor = colorScheme.primary.withOpacity(0.65);
+    final Color oddItemColor = colorScheme.primary.withOpacity(0.3);
+    final Color evenItemColor = colorScheme.primary.withOpacity(0.8);
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -107,13 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                   ],
                   onReorder: (int oldIndex, int newIndex) {
-                    setState(() {
-                      if (oldIndex < newIndex) {
-                        newIndex -= 1;
-                      }
-                      // final int item = _itemList.removeAt(oldIndex);
-                      // _itemList.insert(newIndex, item);
-                    });
+                    moveItemPosition(oldIndex, newIndex);
                   },
                 ))
           ],

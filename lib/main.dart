@@ -42,9 +42,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final _restService = RestService();
-  List<Item> _itemList = [
-    Item(id: "01", name: "test", position: 2, status: false, tag: "test")
-  ];
+  List<Item> _itemList = [];
   void _incrementCounter() {
     setState(() {});
   }
@@ -57,6 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   initList() async {
     final items = await _restService.getListItems();
+
+    items.sort((a, b) => a.position.compareTo(b.position));
     setState(() {
       _itemList = items;
     });
@@ -92,11 +92,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     for (int index = 0; index < _itemList.length; index += 1)
                       ListTile(
                         key: Key('$index'),
-                        tileColor: _itemList[index].position.isOdd
-                            ? oddItemColor
-                            : evenItemColor,
+                        tileColor: index.isOdd ? oddItemColor : evenItemColor,
                         title: Text(_itemList[index].name),
-                        subtitle: Text(_itemList[index].tag),
+                        subtitle: Text(_itemList[index].position.toString()),
                         trailing: Checkbox(
                           value: _itemList[index].status,
                           activeColor: Colors.deepOrange,

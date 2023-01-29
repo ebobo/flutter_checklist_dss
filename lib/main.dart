@@ -110,10 +110,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     for (int index = 0; index < _itemList.length; index += 1)
                       ListTile(
                         key: Key('$index'),
+                        leading: Checkbox(
+                          value: _itemList[index].status,
+                          activeColor: Colors.deepOrange,
+                          onChanged: (bool? value) {},
+                        ),
                         tileColor: index.isOdd ? oddItemColor : evenItemColor,
                         title: Text(_itemList[index].name),
                         subtitle: Text(_itemList[index].position.toString()),
-                        trailing: Checkbox(
+                        trailing: Switch(
                           value: _itemList[index].status,
                           activeColor: Colors.deepOrange,
                           onChanged: (bool? value) {
@@ -134,6 +139,12 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          FloatingActionButton(
+            onPressed: () => _incrementCounter(),
+            tooltip: 'Save',
+            child: const Icon(Icons.save),
+          ),
+          const SizedBox(width: 200),
           FloatingActionButton(
             onPressed: () => _incrementCounter(),
             tooltip: 'Decrement',

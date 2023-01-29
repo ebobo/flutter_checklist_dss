@@ -70,14 +70,19 @@ class _MyHomePageState extends State<MyHomePage> {
       final item = _itemList.removeAt(oldIndex);
       _itemList.insert(newIndex, item);
     });
-    updateItemsPosition();
+    // updateItemsPosition();
   }
 
-  updateItemsPosition() async {
+  void _updateItemsPosition() async {
     for (int index = 0; index < _itemList.length; index += 1) {
       _itemList[index].position = index;
       await _restService.updateItem(_itemList[index]);
     }
+  }
+
+  //save edit result
+  void _save() {
+    _updateItemsPosition();
   }
 
   @override
@@ -103,36 +108,44 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 10),
             SizedBox(
                 height: 750,
-                child: ReorderableListView(
-                  buildDefaultDragHandles: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  children: <Widget>[
-                    for (int index = 0; index < _itemList.length; index += 1)
-                      ListTile(
-                        key: Key('$index'),
-                        leading: Checkbox(
-                          value: _itemList[index].status,
-                          activeColor: Colors.deepOrange,
-                          onChanged: (bool? value) {},
-                        ),
-                        tileColor: index.isOdd ? oddItemColor : evenItemColor,
-                        title: Text(_itemList[index].name),
-                        subtitle: Text(_itemList[index].position.toString()),
-                        trailing: Switch(
-                          value: _itemList[index].status,
-                          activeColor: Colors.deepOrange,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _itemList[index].status = value!;
-                            });
-                          },
-                        ),
-                      ),
-                  ],
-                  onReorder: (int oldIndex, int newIndex) {
-                    moveItemPosition(oldIndex, newIndex);
-                  },
-                ))
+                child: RefreshIndicator(
+                    onRefresh: () async {
+                      initList();
+                    },
+                    child: ReorderableListView(
+                      buildDefaultDragHandles: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      children: <Widget>[
+                        for (int index = 0;
+                            index < _itemList.length;
+                            index += 1)
+                          ListTile(
+                            key: Key('$index'),
+                            leading: Checkbox(
+                              value: _itemList[index].status,
+                              activeColor: Colors.deepOrange,
+                              onChanged: (bool? value) {},
+                            ),
+                            tileColor:
+                                index.isOdd ? oddItemColor : evenItemColor,
+                            title: Text(_itemList[index].name),
+                            subtitle:
+                                Text(_itemList[index].position.toString()),
+                            trailing: Switch(
+                              value: _itemList[index].status,
+                              activeColor: Colors.deepOrange,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  _itemList[index].status = value!;
+                                });
+                              },
+                            ),
+                          ),
+                      ],
+                      onReorder: (int oldIndex, int newIndex) {
+                        moveItemPosition(oldIndex, newIndex);
+                      },
+                    )))
           ],
         ),
       ),
@@ -140,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            onPressed: () => _incrementCounter(),
+            onPressed: () => _save(),
             tooltip: 'Save',
             child: const Icon(Icons.save),
           ),
